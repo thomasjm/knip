@@ -65,6 +65,8 @@ const findWebpackDependencies = async (configFilePath, { manifest, isProduction 
                         entries.push(entry);
                     else if (Array.isArray(entry))
                         entries.push(...entry);
+                    else if (typeof entry === "function")
+                        entries.push(entry());
                     else if (entry && typeof entry === "object" && "filename" in entry)
                         entries.push(entry["filename"]);
                     else {
