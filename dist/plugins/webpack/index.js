@@ -1,0 +1,85 @@
+import { compact } from '../../util/array.js';
+import { join } from '../../util/path.js';
+import { timerify } from '../../util/Performance.js';
+import { hasDependency, load } from '../../util/plugin.js';
+import { getDependenciesFromConfig } from '../babel/index.js';
+export const NAME = 'Webpack';
+export const ENABLERS = ['webpack'];
+export const isEnabled = ({ dependencies }) => hasDependency(dependencies, ENABLERS);
+export const CONFIG_FILE_PATTERNS = ['webpack.config*.{js,ts}'];
+const hasBabelOptions = (use) => Boolean(use) &&
+    typeof use !== 'string' &&
+    'loader' in use &&
+    typeof use.loader === 'string' &&
+    use.loader === 'babel-loader' &&
+    typeof use.options === 'object';
+const info = { compiler: '', issuer: '', realResource: '', resource: '', resourceQuery: '' };
+const resolveRuleSetDependencies = (rule) => {
+    if (!rule || typeof rule === 'string')
+        return [];
+    if (typeof rule.use === 'string')
+        return [rule.use];
+    let useItem = rule.use ?? rule.loader ?? rule;
+    if (typeof useItem === 'function')
+        useItem = useItem(info);
+    return [useItem].flat().flatMap((useItem) => {
+        if (!useItem)
+            return [];
+        if (hasBabelOptions(useItem)) {
+            return [
+                ...resolveUseItem(useItem),
+                ...getDependenciesFromConfig(useItem.options),
+            ];
+        }
+        return resolveUseItem(useItem);
+    });
+};
+const resolveUseItem = (use) => {
+    if (!use)
+        return [];
+    if (typeof use === 'string')
+        return [use];
+    if ('loader' in use && typeof use.loader === 'string')
+        return [use.loader];
+    return [];
+};
+const findWebpackDependencies = async (configFilePath, { manifest, isProduction }) => {
+    const config = await load(configFilePath);
+    if (!config)
+        return [];
+    const passes = typeof config === 'function' ? [false, true] : [isProduction];
+    const dependencies = passes.flatMap(isProduction => {
+        const env = { production: isProduction };
+        const argv = { mode: isProduction ? 'production' : 'development' };
+        const cfg = typeof config === 'function' ? config(env, argv) : config;
+        return [cfg].flat().flatMap(config => {
+            const dependencies = (config.module?.rules?.flatMap(resolveRuleSetDependencies) ?? []).map(loader => loader.replace(/\?.*/, ''));
+            let entries = [];
+            if (typeof cfg.entry === "string")
+                entries.push(cfg.entry);
+            else if (Array.isArray(cfg.entry))
+                entries.push(...cfg.entry);
+            else if (typeof cfg.entry === "object") {
+                Object.values(cfg.entry).map(entry => {
+                    if (typeof entry === "string")
+                        entries.push(entry);
+                    else if (Array.isArray(entry))
+                        entries.push(...entry);
+                    else if (entry && typeof entry === "object" && "filename" in entry)
+                        entries.push(entry["filename"]);
+                    else {
+                    }
+                });
+            }
+            else {
+            }
+            entries = entries.map(entry => (config.context ? join(config.context, entry) : entry));
+            return [...dependencies, ...entries];
+        });
+    });
+    const scripts = Object.values(manifest.scripts ?? {});
+    const webpackCLI = scripts.some(script => script?.includes('webpack ')) ? ['webpack-cli'] : [];
+    const webpackDevServer = scripts.some(script => script?.includes('webpack serve')) ? ['webpack-dev-server'] : [];
+    return compact([...dependencies, ...webpackCLI, ...webpackDevServer]);
+};
+export const findDependencies = timerify(findWebpackDependencies);

@@ -1,0 +1,26 @@
+export declare const helpText = "\u2702\uFE0F  Find unused files, dependencies and exports in your JavaScript and TypeScript projects\n\nUsage: knip [options]\n\nOptions:\n  -c, --config [file]      Configuration file path (default: [.]knip.json[c], knip.js, knip.ts or package.json#knip)\n  -t, --tsConfig [file]    TypeScript configuration path (default: tsconfig.json)\n  --production             Analyze only production source files (e.g. no tests, devDependencies, exported types)\n  --strict                 Consider only direct dependencies of workspace (not devDependencies, not other workspaces)\n  --workspace [dir]        Analyze a single workspace (default: analyze all configured workspaces)\n  --no-gitignore           Don't use .gitignore\n  --include                Report only provided issue type(s), can be comma-separated or repeated (1)\n  --exclude                Exclude provided issue type(s) from report, can be comma-separated or repeated (1)\n  --dependencies           Shortcut for --include dependencies,unlisted,unresolved\n  --exports                Shortcut for --include exports,nsExports,classMembers,types,nsTypes,enumMembers,duplicates\n  --include-entry-exports  Include entry files when reporting unused exports\n  -n, --no-progress        Don't show dynamic progress updates (automatically enabled in CI environments)\n  --reporter               Select reporter: symbols, compact, codeowners, json (default: symbols)\n  --reporter-options       Pass extra options to the reporter (as JSON string, see example)\n  --no-config-hints        Suppress configuration hints\n  --no-exit-code           Always exit with code zero (0)\n  --max-issues             Maximum number of issues before non-zero exit code (default: 0)\n  -d, --debug              Show debug output\n  --debug-file-filter      Filter for files in debug output (regex as string)\n  --performance            Measure count and running time of expensive functions and display stats table\n  -h, --help               Print this help text\n  -V, --version            Print version\n\n(1) Issue types: files, dependencies, unlisted, unresolved, exports, nsExports, classMembers, types, nsTypes, enumMembers, duplicates\n\nExamples:\n\n$ knip\n$ knip --production\n$ knip --workspace packages/client --include files,dependencies\n$ knip -c ./config/knip.json --reporter compact\n$ knip --reporter codeowners --reporter-options '{\"path\":\".github/CODEOWNERS\"}'\n$ knip --debug --debug-file-filter '(specific|particular)-module'\n\nMore documentation and bug reports: https://github.com/webpro/knip";
+declare const _default: {
+    config: string | undefined;
+    debug: boolean | undefined;
+    'debug-file-filter': string | undefined;
+    dependencies: boolean | undefined;
+    exclude: string[] | undefined;
+    exports: boolean | undefined;
+    help: boolean | undefined;
+    include: string[] | undefined;
+    'include-entry-exports': boolean | undefined;
+    'max-issues': string | undefined;
+    'no-config-hints': boolean | undefined;
+    'no-exit-code': boolean | undefined;
+    'no-gitignore': boolean | undefined;
+    'no-progress': boolean | undefined;
+    performance: boolean | undefined;
+    production: boolean | undefined;
+    reporter: string | undefined;
+    'reporter-options': string | undefined;
+    strict: boolean | undefined;
+    tsConfig: string | undefined;
+    version: boolean | undefined;
+    workspace: string | undefined;
+};
+export default _default;

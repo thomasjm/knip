@@ -1,0 +1,13 @@
+import path from 'node:path';
+const isAbsolute = path.isAbsolute;
+export const dirname = path.posix.dirname;
+export const extname = path.posix.extname;
+export const join = path.posix.join;
+export const toPosix = (value) => value.split(path.sep).join(path.posix.sep);
+export const cwd = toPosix(process.cwd());
+export const resolve = (...paths) => paths.length === 1 ? path.posix.join(cwd, paths[0]) : path.posix.resolve(...paths);
+export const relative = (from, to) => path.posix.relative(to ? toPosix(from) : cwd, toPosix(to ?? from));
+export const isInNodeModules = (filePath) => filePath.includes('node_modules');
+export const toAbsolute = (id, base) => (isAbsolute(id) ? id : join(base, id));
+export const toRelative = (id) => (isAbsolute(id) ? relative(id) : id);
+export const isInternal = (id) => (id.startsWith('.') || isAbsolute(id)) && !isInNodeModules(id);

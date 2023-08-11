@@ -1,0 +1,12 @@
+import type { IssueType } from './types/issues.js';
+export declare const ROOT_WORKSPACE_NAME = ".";
+export declare const KNIP_CONFIG_LOCATIONS: string[];
+export declare const DEFAULT_EXTENSIONS: string[];
+export declare const TEST_FILE_PATTERNS: string[];
+export declare const GLOBAL_IGNORE_PATTERNS: string[];
+export declare const IGNORED_GLOBAL_BINARIES: string[];
+export declare const IGNORED_DEPENDENCIES: string[];
+export declare const IGNORED_FILE_EXTENSIONS: string[];
+export declare const IGNORE_DEFINITELY_TYPED: string[];
+export declare const ISSUE_TYPES: IssueType[];
+export declare const ISSUE_TYPE_TITLE: Record<IssueType, string>;

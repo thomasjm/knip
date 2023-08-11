@@ -1,0 +1,19 @@
+import { timerify } from '../../util/Performance.js';
+import { hasDependency, load } from '../../util/plugin.js';
+export const NAME = 'Storybook';
+export const ENABLERS = [/^@storybook\//, '@nrwl/storybook'];
+export const isEnabled = ({ dependencies }) => hasDependency(dependencies, ENABLERS);
+export const CONFIG_FILE_PATTERNS = ['.storybook/{main,manager}.{js,ts}'];
+export const ENTRY_FILE_PATTERNS = ['.storybook/preview.{js,jsx,ts,tsx}', '**/*.stories.{js,jsx,ts,tsx}'];
+export const PROJECT_FILE_PATTERNS = ['.storybook/**/*.{js,jsx,ts,tsx}'];
+const findStorybookDependencies = async (configFilePath) => {
+    const config = await load(configFilePath);
+    if (!config)
+        return [];
+    const addons = config.addons?.map(addon => (typeof addon === 'string' ? addon : addon.name)) ?? [];
+    const builder = config?.core?.builder;
+    const builderPackages = builder && /webpack/.test(builder) ? [`@storybook/builder-${builder}`, `@storybook/manager-${builder}`] : [];
+    const frameworks = config.framework?.name ? [config.framework.name] : [];
+    return [...addons, ...builderPackages, ...frameworks];
+};
+export const findDependencies = timerify(findStorybookDependencies);

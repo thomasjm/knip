@@ -1,0 +1,56 @@
+import type { Configuration, PluginName, WorkspaceConfiguration } from './types/config.js';
+import type { PackageJsonWithPlugins } from './types/plugins.js';
+import type { InstalledBinaries, PeerDependencies } from './types/workspace.js';
+type WorkspaceManagerOptions = {
+    name: string;
+    dir: string;
+    cwd: string;
+    config: WorkspaceConfiguration;
+    manifest: PackageJsonWithPlugins;
+    rootIgnore: Configuration['ignore'];
+    negatedWorkspacePatterns: string[];
+    enabledPluginsInAncestors: string[];
+    isProduction: boolean;
+    isStrict: boolean;
+};
+type ReferencedDependencies = Set<[string, string]>;
+export declare class WorkspaceWorker {
+    name: string;
+    dir: string;
+    cwd: string;
+    config: WorkspaceConfiguration;
+    manifest: PackageJsonWithPlugins;
+    isProduction: boolean;
+    isStrict: boolean;
+    rootIgnore: Configuration['ignore'];
+    negatedWorkspacePatterns: string[];
+    enabledPluginsInAncestors: string[];
+    enabled: Record<PluginName, boolean>;
+    enabledPlugins: PluginName[];
+    referencedDependencies: ReferencedDependencies;
+    peerDependencies: PeerDependencies;
+    installedBinaries: InstalledBinaries;
+    constructor({ name, dir, cwd, config, manifest, isProduction, isStrict, rootIgnore, negatedWorkspacePatterns, enabledPluginsInAncestors, }: WorkspaceManagerOptions);
+    init(): Promise<void>;
+    private setEnabledPlugins;
+    private initReferencedDependencies;
+    private getConfigForPlugin;
+    getEntryFilePatterns(): string[];
+    getProjectFilePatterns(): string[];
+    getPluginEntryFilePatterns(isIncludeProductionEntryFiles?: boolean): string[];
+    getPluginProjectFilePatterns(): string[];
+    getPluginConfigPatterns(): string[];
+    getProductionEntryFilePatterns(): string[];
+    getProductionProjectFilePatterns(): string[];
+    getProductionPluginEntryFilePatterns(): string[];
+    private getConfigurationFilePatterns;
+    getIgnorePatterns(): string[];
+    private findDependenciesByPlugins;
+    findAllDependencies(): Promise<{
+        peerDependencies: PeerDependencies;
+        installedBinaries: InstalledBinaries;
+        referencedDependencies: ReferencedDependencies;
+        enabledPlugins: ("ava" | "babel" | "capacitor" | "changesets" | "commitizen" | "commitlint" | "cspell" | "cypress" | "eslint" | "gatsby" | "husky" | "jest" | "lefthook" | "markdownlint" | "mocha" | "next" | "nx" | "nyc" | "playwright" | "postcss" | "prettier" | "remark" | "remix" | "rollup" | "sentry" | "storybook" | "stryker" | "stylelint" | "tailwind" | "typedoc" | "typescript" | "vite" | "vitest" | "webpack" | "githubActions" | "lintStaged" | "npmPackageJsonLint" | "releaseIt" | "semanticRelease" | "svelte")[];
+    }>;
+}
+export {};
